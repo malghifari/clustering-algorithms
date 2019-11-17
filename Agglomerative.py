@@ -1,4 +1,5 @@
 import numpy as np
+from utils import euclidean_distance
 
 class Agglomerative:
     def __init__(self, n_clusters, linkage):
@@ -31,10 +32,20 @@ class Agglomerative:
 
     def _get_distance(self, cluster_a, cluster_b):
         if self.linkage == 'single':
-            return 10
-        elif self.linkage == 'complete':
-            return 0
-        # etc
+            for i in range(cluster_a.shape[0]):
+                for j in range(cluster_b.shape[0]):
+                    distance = euclidean_distance(cluster_a[i], cluster_b[j])
+                    if (i == 0 and j == 0) or (min_distance > distance):
+                        min_distance = distance
+            return min_distance
 
+        elif self.linkage == 'complete':
+            for i in range(cluster_a.shape[0]):
+                for j in range(cluster_b.shape[0]):
+                    distance = euclidean_distance(cluster_a[i], cluster_b[j])
+                    if (i == 0 and j == 0) or (max_distance < distance):
+                        max_distance = distance
+            return max_distance
+            
     def _combine_cluster(self, cluster_a, cluster_b):
         pass
