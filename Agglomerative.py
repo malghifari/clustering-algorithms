@@ -23,11 +23,14 @@ class Agglomerative:
                         b = j
             
             # buat cluster baru dengan data yang digabung
-            self._combine_cluster(self.clusters[a], self.clusters[b])
+            combined_cluster = self._combine_cluster(self.clusters[a], self.clusters[b])
             
             # hapus 2 cluster sebelumnya
             self.clusters = np.delete(self.clusters, a, 0)
             self.clusters = np.delete(self.clusters, b, 0)
+
+            # append cluster baru ke clusters
+            self.clusters = np.append(self.clusters, combined_cluster)
 
     def _get_distance(self, cluster_a, cluster_b):
         if self.linkage == 'single':
