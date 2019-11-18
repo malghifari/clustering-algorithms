@@ -22,7 +22,6 @@ class Agglomerative:
                         a = i
                         b = j
             
-
             # buat cluster baru dengan data yang digabung
             self._combine_cluster(self.clusters[a], self.clusters[b])
             
@@ -46,6 +45,12 @@ class Agglomerative:
                     if (i == 0 and j == 0) or (max_distance < distance):
                         max_distance = distance
             return max_distance
+
+        elif self.linkage == 'average':
+            return 0
+
+        elif self.linkage == 'average-group':
+            return 0
             
     def _combine_cluster(self, cluster_a, cluster_b):
-        pass
+        return np.concatenate((cluster_a, cluster_b))
