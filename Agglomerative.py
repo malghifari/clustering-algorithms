@@ -75,7 +75,16 @@ class Agglomerative:
             return total_distance / count
 
         elif self.linkage == 'average-group':
-            return 0
+            cluster_a = np.asarray(cluster_a)
+            avg_cluster_a = np.zeros((cluster_a.shape[1]))
+            for item in cluster_a:
+                avg_cluster_a = avg_cluster_a + item
+            cluster_b = np.asarray(cluster_b)
+            avg_cluster_b = np.zeros((cluster_b.shape[1]))
+            for item in cluster_b:
+                avg_cluster_b = avg_cluster_b + item
+
+            return euclidean_distance(avg_cluster_a, avg_cluster_b)
             
     def _combine_cluster(self, cluster_a, cluster_b):
         return np.concatenate((np.asarray(cluster_a), np.asarray(cluster_b))).tolist()
