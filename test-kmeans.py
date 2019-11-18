@@ -6,6 +6,7 @@ import seaborn as sns; sns.set()
 import pandas as pd
 from KMeans import KMeans
 from sklearn.cluster import KMeans as KMeans_SKLearn
+from sklearn.metrics import accuracy_score
 
 iris = load_iris()
 X = iris['data']
@@ -21,6 +22,11 @@ y_pred = pd.DataFrame({'label': km.predict(X)})
 # Scikit Learn
 km_scikit = KMeans_SKLearn(n_clusters=N_CLUSTERS)
 y_pred_sklearn = pd.DataFrame({'label': km_scikit.fit_predict(X)})
+
+y_pred_transformed = y_pred['label']
+y_pred_sklearn_transformed = y_pred_sklearn['label']
+print("Akurasi Model Sendiri:", accuracy_score(iris['target'], y_pred_transformed))
+print("Akurasi Model sklearn:", accuracy_score(iris['target'], y_pred_sklearn_transformed))
 
 plt.subplot(2, 2, 1)
 plt.title('Predicted')

@@ -6,9 +6,10 @@ import seaborn as sns; sns.set()
 import pandas as pd
 from DBSCAN import DBSCAN
 from sklearn.cluster import DBSCAN as DBSCAN_Sklearn
+from sklearn.metrics import accuracy_score
 
 MINPTS = 5
-EPSILON = 0.9
+EPSILON = 0.5
 
 iris = load_iris()
 X = iris['data']
@@ -23,6 +24,11 @@ y_pred = pd.DataFrame({'label': dbscan.predict()})
 dbscan_sklearn = DBSCAN_Sklearn(eps=EPSILON, min_samples=MINPTS)
 dbscan_sklearn.fit(X)
 y_pred_sklearn = pd.DataFrame({'label': dbscan_sklearn.labels_})
+
+y_pred_transformed = [2 if y == -1 else y for y in y_pred['label']]
+y_pred_sklearn_transformed = [2 if y == -1 else y for y in y_pred_sklearn['label']]
+print("Akurasi Model Sendiri:", accuracy_score(iris['target'], y_pred_transformed))
+print("Akurasi Model sklearn:", accuracy_score(iris['target'], y_pred_sklearn_transformed))
 
 plt.subplot(2, 2, 1)
 plt.title('Predicted')
@@ -51,7 +57,3 @@ sns.scatterplot(x="principal component 1", y="principal component 2", hue="label
 plt.tight_layout()
 plt.show()
 
-sorted_y = y.copy()
-sorted_y.sort()
-print(np.unique(y))
-print(sorted_y)
