@@ -8,16 +8,20 @@ class Agglomerative:
     
     def fit(self, X):
         # Init clusters dengan tiap data point
-        self.clusters = np.reshape(X, (X.shape[0], 1, X.shape[1]))
+        self.X = np.asarray(X)
+        self.clusters = np.reshape(X, (X.shape[0], 1, X.shape[1])).tolist()
+        self.X = X.tolist()
 
         # looping hingga jumlah cluster == n_cluster
-        while self.clusters.shape[0] > self.n_clusters:
+        while len(self.clusters) > self.n_clusters:
             # cari dua cluster dengan jarak paling kecil
-            
-            for i in range(self.clusters.shape[0]):
-                for j in range(i+1, self.clusters.shape[0]):
+            min_distance = 0
+            a = 0
+            b = 0
+            for i in range(len(self.clusters)):
+                for j in range(i+1, len(self.clusters)):
                     distance = self._get_distance(self.clusters[i], self.clusters[j])
-                    if (i == 0 and j == 0) or (min_distance > distance):
+                    if (i == 0 and j == 1) or (min_distance > distance):
                         min_distance = distance
                         a = i
                         b = j
@@ -26,34 +30,52 @@ class Agglomerative:
             combined_cluster = self._combine_cluster(self.clusters[a], self.clusters[b])
             
             # hapus 2 cluster sebelumnya
-            self.clusters = np.delete(self.clusters, a, 0)
-            self.clusters = np.delete(self.clusters, b, 0)
+            self.clusters.pop(b)
+            self.clusters.pop(a)
 
             # append cluster baru ke clusters
-            self.clusters = np.append(self.clusters, combined_cluster)
+            self.clusters.append(combined_cluster)
+        
+    def predict(self):
+        y = np.full(len(self.X), 0).tolist()
+        for i in range(len(self.X)):
+            y[i] = self._which_cluster(self.X[i])
+        return y
+
+    def _which_cluster(self, item):
+        for i in range(len(self.clusters)):
+            for j in range(len(self.clusters[i])):
+                if item == self.clusters[i][j]:
+                    return i
 
     def _get_distance(self, cluster_a, cluster_b):
         if self.linkage == 'single':
-            for i in range(cluster_a.shape[0]):
-                for j in range(cluster_b.shape[0]):
+            for i in range(len(cluster_a)):
+                for j in range(len(cluster_b)):
                     distance = euclidean_distance(cluster_a[i], cluster_b[j])
                     if (i == 0 and j == 0) or (min_distance > distance):
                         min_distance = distance
             return min_distance
 
         elif self.linkage == 'complete':
-            for i in range(cluster_a.shape[0]):
-                for j in range(cluster_b.shape[0]):
+            for i in range(len(cluster_a)):
+                for j in range(len(cluster_b)):
                     distance = euclidean_distance(cluster_a[i], cluster_b[j])
                     if (i == 0 and j == 0) or (max_distance < distance):
                         max_distance = distance
             return max_distance
 
         elif self.linkage == 'average':
-            return 0
+            total_distance = 0
+            count = 0
+            for i in range(len(cluster_a)):
+                for j in range(len(cluster_b)):
+                    total_distance += euclidean_distance(cluster_a[i], cluster_b[j])
+                    count += 1
+            return total_distance / count
 
         elif self.linkage == 'average-group':
             return 0
             
     def _combine_cluster(self, cluster_a, cluster_b):
-        return np.concatenate((cluster_a, cluster_b))
+        return np.concatenate((np.asarray(cluster_a), np.asarray(cluster_b))).tolist()
